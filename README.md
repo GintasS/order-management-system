@@ -188,4 +188,17 @@ To run tests, run the following command using dotnet CLI:
 ```bash
   dotnet test
 ```
+## Screenshots
 
+
+<h3>Web app</h3>
+<img src="docs/ss1.png" width=700 height=500></img>
+
+<h3>Console app</h3>
+<img src="docs/ss3.png" width=700 height=400></img>
+
+<h3>Web app configurations</h3>
+<img src="docs/ss4.png" width=700 height=500></img>
+
+<h3>Console app</h3>
+<img src="docs/ss2.png" width=700 height=400></img>
