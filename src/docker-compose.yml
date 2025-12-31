@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  css-challenge-application:
+    build:
+      context: ./CSS.Challenge.Application
+      dockerfile: Dockerfile
+    container_name: css-challenge-application
+    depends_on:
+      - css-challenge-domain
+    networks:
+      - css-challenge-network
+
+  css-challenge-web:
+    build:
+      context: ./CSS.Challenge.Web
+      dockerfile: Dockerfile
+    container_name: css-challenge-web
+    ports:
+      - "8080:80"
+    depends_on:
+      - css-challenge-application
+    networks:
+      - css-challenge-network
+
+  css-challenge-domain:
+    build:
+      context: ./CSS.Challenge.Domain
+      dockerfile: Dockerfile
+    container_name: css-challenge-domain
+    networks:
+      - css-challenge-network
+
+networks:
+  css-challenge-network:
+    driver: bridge
