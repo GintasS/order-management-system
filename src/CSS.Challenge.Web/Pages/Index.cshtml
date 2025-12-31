@@ -1,0 +1,297 @@
+﻿@page
+@model IndexModel
+@{
+	ViewData["Title"] = "Restaurant Order Management System";
+}
+
+<link rel="stylesheet" href="~/css/orders.css" />
+
+<div class="text-center">
+	<h1 class="display-4">Restaurant Order Management System</h1>
+	<p>Real-time order processing and tracking system</p>
+	<div class="alert alert-info mt-3" role="alert">
+		<h5>About This System</h5>
+		<p>
+			This is a restaurant order management platform designed to handle concurrent order processing, 
+			storage optimization, and delivery management. The system processes orders through multiple states 
+			(pre-processing, cooking, placement, and delivery) while managing temperature-controlled storage units 
+			(Heater, Cooler, and Shelf). Real-time updates via SignalR keep you informed of every order status change, 
+			and the intelligent placement algorithm ensures orders are stored at optimal temperatures to maintain freshness 
+			and meet delivery time requirements.
+		</p>
+	</div>
+	<button id="startProcessingButton" class="btn btn-primary mt-3">Start Processing</button>
+	<button id="clearButton" class="btn btn-danger mt-3">Clear</button>
+</div>
+
+<!-- Top-level tabs -->
+<ul class="nav nav-tabs mt-4" id="mainTabs" role="tablist">
+	<li class="nav-item" role="presentation">
+		<button class="nav-link active"
+		        id="orderStates-main-tab"
+		        data-bs-toggle="tab"
+		        data-bs-target="#orderStatesMainTab"
+		        type="button"
+		        role="tab">
+			Order States
+		</button>
+	</li>
+
+	<li class="nav-item" role="presentation">
+		<button class="nav-link"
+				id="configuration-main-tab"
+				data-bs-toggle="tab"
+				data-bs-target="#configurationMainTab"
+				type="button"
+				role="tab">
+			Configuration
+		</button>
+	</li>
+</ul>
+
+<div class="tab-content" id="mainTabsContent">
+
+	<!-- ORDER STATES TAB -->
+	<div class="tab-pane fade show active"
+		 id="orderStatesMainTab"
+		 role="tabpanel"
+		 aria-labelledby="orderStates-main-tab">
+
+		<div class="tab-content" id="ordersTabsContent">
+			<div class="tab-pane fade show active"
+				 id="logsTab"
+				 role="tabpanel"
+				 aria-labelledby="logs-tab">
+
+				<!-- STORAGE BUCKETS SECTION -->
+				<div class="mt-4 mb-4">
+					<h3>Storage Buckets</h3>
+					<div class="row">
+						<div class="col-md-4">
+							<div class="bucket-container border rounded p-3" style="background-color: #fff3cd;">
+								<h4 class="text-center">Heater</h4>
+								<div id="heaterBucket" class="bucket" style="min-height: 150px; border: 2px dashed #ff6b6b; border-radius: 8px; padding: 10px; background-color: #ffe0e0;">
+									<!-- Orders will be added here dynamically -->
+								</div>
+								<div class="text-center mt-2">
+									<small>Orders: <span id="heaterCount">0</span></small>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-4">
+							<div class="bucket-container border rounded p-3" style="background-color: #e7f3ff;">
+								<h4 class="text-center">Cooler</h4>
+								<div id="coolerBucket" class="bucket" style="min-height: 150px; border: 2px dashed #4dabf7; border-radius: 8px; padding: 10px; background-color: #d0ebff;">
+									<!-- Orders will be added here dynamically -->
+								</div>
+								<div class="text-center mt-2">
+									<small>Orders: <span id="coolerCount">0</span></small>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-4">
+							<div class="bucket-container border rounded p-3" style="background-color: #f1f3f5;">
+								<h4 class="text-center">Shelf</h4>
+								<div id="shelfBucket" class="bucket" style="min-height: 150px; border: 2px dashed #868e96; border-radius: 8px; padding: 10px; background-color: #e9ecef;">
+									<!-- Orders will be added here dynamically -->
+								</div>
+								<div class="text-center mt-2">
+									<small>Orders: <span id="shelfCount">0</span></small>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div id="logContainer" class="mt-4" style="overflow-x: auto; overflow-y: auto; height: 600px;">
+					<div style="display: flex; min-width: min-content;">
+
+						<div style="min-width: 300px; padding: 10px;">
+							<h3>Pre-Processed Orders</h3>
+							<table class="table table-striped">
+								<tbody id="processOrderTable"></tbody>
+							</table>
+						</div>
+
+						<div style="min-width: 300px; padding: 10px;">
+							<h3>New Orders</h3>
+							<table class="table table-striped">
+								<tbody id="newOrdersTableBody"></tbody>
+							</table>
+						</div>
+
+						<div style="min-width: 300px; padding: 10px;">
+							<h3>Cooked Orders</h3>
+							<table class="table table-striped">
+								<tbody id="cookOrderTable"></tbody>
+							</table>
+						</div>
+
+						<div style="min-width: 300px; padding: 10px;">
+							<h3>Placed Orders</h3>
+							<table class="table table-striped">
+								<tbody id="placeOrderTable"></tbody>
+							</table>
+						</div>
+
+						<div style="min-width: 300px; padding: 10px;">
+							<h3>Delivered Orders</h3>
+							<table class="table table-striped">
+								<tbody id="deliveredOrdersTableBody"></tbody>
+							</table>
+						</div>
+
+						<div style="min-width: 300px; padding: 10px;">
+							<h3>Moved Orders</h3>
+							<table class="table table-striped">
+								<tbody id="moveTableBody"></tbody>
+							</table>
+						</div>
+
+						<div style="min-width: 300px; padding: 10px;">
+							<h3>Discarded Orders</h3>
+							<table class="table table-striped">
+								<tbody id="discardedTableBody"></tbody>
+							</table>
+						</div>
+
+						<div style="min-width: 300px; padding: 10px;">
+							<h3>Other Logs</h3>
+							<table class="table table-striped">
+								<tbody id="otherLogsTableBody"></tbody>
+							</table>
+						</div>
+
+					</div>
+				</div>
+
+
+			</div>
+		</div>
+	</div>
+
+	<div class="tab-pane fade"
+		 id="analyticsMainTab"
+		 role="tabpanel"
+		 aria-labelledby="analytics-main-tab">
+
+		<div class="mt-4">
+			<h3>Placed Order Stacks</h3>
+			<p class="text-muted">Orders currently placed in Heater / Cooler / Shelf.</p>
+
+			<div class="row mt-4">
+				<div class="col-md-4">
+					<h4>Heater</h4>
+					<div class="order-stack" id="analyticsHeaterStack"></div>
+					<div class="small text-muted">Count: <span id="analyticsHeaterCount">0</span></div>
+				</div>
+
+				<div class="col-md-4">
+					<h4>Cooler/Freezer</h4>
+					<div class="order-stack" id="analyticsFreezerStack"></div>
+					<div class="small text-muted">Count: <span id="analyticsFreezerCount">0</span></div>
+				</div>
+
+				<div class="col-md-4">
+					<h4>Shelf</h4>
+					<div class="order-stack" id="analyticsShelfStack"></div>
+					<div class="small text-muted">Count: <span id="analyticsShelfCount">0</span></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- CONFIGURATION TAB -->
+	<div class="tab-pane fade"
+		 id="configurationMainTab"
+		 role="tabpanel"
+		 aria-labelledby="configuration-main-tab">
+
+		<div class="mt-4">
+			<h3>Configuration</h3>
+			<p class="text-muted mb-3">Adjust capacities and other settings.</p>
+
+			<!-- Example: move your 3 capacity sliders here -->
+
+			<div class="row mt-3">
+				<div class="col-md-4">
+					<label class="form-label">
+						Heater capacity: <span id="heaterCapLabel">6</span>
+					</label>
+					<input id="heaterCapSlider" type="range" class="form-range" min="0" max="50" value="6" />
+				</div>
+
+				<div class="col-md-4">
+					<label class="form-label">
+						Cooler capacity: <span id="freezerCapLabel">0</span>
+					</label>
+					<input id="freezerCapSlider" type="range" class="form-range" min="0" max="50" value="6" />
+				</div>
+
+				<div class="col-md-4">
+					<label class="form-label">
+						Shelf capacity: <span id="shelfCapLabel">0</span>
+					</label>
+					<input id="shelfCapSlider" type="range" class="form-range" min="0" max="50" value="12" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-4">
+					<label class="form-label">
+						Freshness (Min): <span id="freshnessMinLabel">1</span>
+					</label>
+					<input id="freshnessMinSlider" type="range" class="form-range" min="1" max="100" value="1" />
+				</div>
+
+				<div class="col-md-4">
+					<label class="form-label">
+						Freshness (Max): <span id="freshnessMaxLabel">100</span>
+					</label>
+					<input id="freshnessMaxSlider" type="range" class="form-range" min="1" max="100" value="100" />
+				</div>
+
+				<div class="col-md-4">
+					<label class="form-label">
+						Pickup Time (Min): <span id="pickupTimeMinLabel">4</span>
+					</label>
+					<input id="pickupTimeMinSlider" type="range" class="form-range" min="1" max="20" value="4" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-4">
+					<label class="form-label">
+						Pickup Time (Max): <span id="pickupTimeMaxLabel">20</span>
+					</label>
+					<input id="pickupTimeMaxSlider" type="range" class="form-range" min="4" max="20" value="20" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-4">
+					<label class="form-label">
+						Number of Orders: <span id="orderCountLabel">10</span>
+					</label>
+					<input id="orderCountSlider" type="range" class="form-range" min="1" max="100" value="10" />
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+</div>
+
+
+
+@section Scripts {
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+	
+	<script src="~/js/sliders.js"></script>
+	<script src="~/js/buckets.js"></script>
+	<script src="~/js/signalr-handler.js"></script>
+	<script src="~/js/button-handlers.js"></script>
+}
