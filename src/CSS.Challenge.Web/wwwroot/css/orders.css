@@ -1,0 +1,33 @@
+.order-badge {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 5px;
+    border-radius: 6px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: all 0.4s ease-out;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.order-badge:hover {
+    transform: scale(1.05);
+}
+
+.order-badge.heater {
+    background-color: #ff6b6b;
+}
+
+.order-badge.cooler {
+    background-color: #4dabf7;
+}
+
+.order-badge.shelf {
+    background-color: #868e96;
+}
+
+.order-badge.removing {
+    opacity: 0;
+    transform: translateY(-20px);
+}
