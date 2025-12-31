@@ -1,0 +1,11 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "WebApplication1\\CSS.Challenge.Web.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

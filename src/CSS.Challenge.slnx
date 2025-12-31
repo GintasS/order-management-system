@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="../docs/CHANGELOG.MD" />
+    <File Path="../docs/css-coding-challenge-architectural-diagram.excalidraw" />
+    <File Path="../docs/image-1.png" />
+    <File Path="../docs/image.png" />
+    <File Path="../docs/TakeHome_challenge_m1da_20251030.pdf" />
+    <File Path="../docs/TASK-SIMPLIFIED.MD" />
+    <File Path="Dockerfile" />
+  </Folder>
+  <Project Path="CSS.Challenge.Application/CSS.Challenge.Application.csproj" />
+  <Project Path="CSS.Challenge.Domain/CSS.Challenge.Domain.csproj" />
+  <Project Path="CSS.Challenge.IntegrationTests/CSS.Challenge.IntegrationTests.csproj" />
+  <Project Path="CSS.Challenge.Tests/CSS.Challenge.UnitTests.csproj" />
+  <Project Path="CSS.Challenge.Web/CSS.Challenge.Web.csproj" />
+</Solution>
